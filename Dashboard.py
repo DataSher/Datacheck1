@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import os
 import warnings
-from iapws import IAPWS97
 import matplotlib.pyplot as plt
 from pyXSteam.XSteam import XSteam
 
