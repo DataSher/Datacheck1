@@ -192,9 +192,7 @@ else:
 
 # Calculate health indices
 bearing_health_index = []
-            #st.write(df_filtered.head(3))
-            
-
+# Iterate through bearings
 for bearing in bearings:
     # Get coefficients from the DataFrame
     coeffs_drain = coefficients_df[(coefficients_df['Plant'] == selected_station) & 
@@ -241,78 +239,73 @@ for bearing in bearings:
         # Initialize vibration indices
         vibration_health_index_x = 0
         vibration_health_index_y = 0
-        pedestal_health_index = 0
+        pedestal_health_index_x = 0
+        pedestal_health_index_y = 0
 
-        # Check if it's bearing 9
-        if bearing == 9:
-            weighted_health_index = 100 / ((3 * metal_health_index + 1 * drain_health_index) / 4)
-            weighted_health_index = max(1, min(100.0, weighted_health_index))
+        # For BBGS Unit 3, calculate pedestal health index for both X and Y
+        if selected_station == "BBGS" and selected_unit == "Unit 3":
+            if not coeffs_pedestal.empty:
+                housing_vib_value_x = df_filtered[f'HOUSING VIB X {bearing}'].mean()
+                housing_vib_value_y = df_filtered[f'HOUSING VIB Y {bearing}'].mean()
+
+                pedestal_health_index_x = max(0, min(10,
+                    coeffs_pedestal['Coefficient A'].values[0] * housing_vib_value_x**2 + 
+                    coeffs_pedestal['Coefficient B'].values[0] * housing_vib_value_x + 
+                    coeffs_pedestal['Coefficient C'].values[0]))
+
+                pedestal_health_index_y = max(0, min(10,
+                    coeffs_pedestal['Coefficient A'].values[0] * housing_vib_value_y**2 + 
+                    coeffs_pedestal['Coefficient B'].values[0] * housing_vib_value_y + 
+                    coeffs_pedestal['Coefficient C'].values[0]))
+
+            weighted_health_index = max(0, min(100,
+                100 / ((3 * metal_health_index + 4 * vibration_health_index_x + 4 * vibration_health_index_y + 
+                        2 * pedestal_health_index_x + 2 * pedestal_health_index_y + 
+                        2 * drain_health_index) / 17)))
+        
         else:
-            # Calculate vibration health indices based on bearing
-            if bearing <= 4:
-                # For bearings 1 to 4
-                if not coeffs_vibration_x.empty:
-                    shaft_vib_x_value = df_filtered[f'SHAFT VIB X {bearing}'].mean()
-                    vibration_health_index_x = max(0, min(10,
-                        coeffs_vibration_x['Coefficient A'].values[0] * shaft_vib_x_value**2 + 
-                        coeffs_vibration_x['Coefficient B'].values[0] * shaft_vib_x_value + 
-                        coeffs_vibration_x['Coefficient C'].values[0]))
+            # Calculate vibration health indices for other bearings
+            if not coeffs_vibration_x.empty:
+                shaft_vib_x_value = df_filtered[f'SHAFT VIB X {bearing}'].mean()
+                vibration_health_index_x = max(0, min(10,
+                    coeffs_vibration_x['Coefficient A'].values[0] * shaft_vib_x_value**2 + 
+                    coeffs_vibration_x['Coefficient B'].values[0] * shaft_vib_x_value + 
+                    coeffs_vibration_x['Coefficient C'].values[0]))
 
-                if not coeffs_vibration_y.empty:
-                    shaft_vib_y_value = df_filtered[f'SHAFT VIB Y {bearing}'].mean()
-                    vibration_health_index_y = max(0, min(10,
-                        coeffs_vibration_y['Coefficient A'].values[0] * shaft_vib_y_value**2 + 
-                        coeffs_vibration_y['Coefficient B'].values[0] * shaft_vib_y_value + 
-                        coeffs_vibration_y['Coefficient C'].values[0]))
+            if not coeffs_vibration_y.empty:
+                shaft_vib_y_value = df_filtered[f'SHAFT VIB Y {bearing}'].mean()
+                vibration_health_index_y = max(0, min(10,
+                    coeffs_vibration_y['Coefficient A'].values[0] * shaft_vib_y_value**2 + 
+                    coeffs_vibration_y['Coefficient B'].values[0] * shaft_vib_y_value + 
+                    coeffs_vibration_y['Coefficient C'].values[0]))
 
-                if not coeffs_pedestal.empty:
-                    housing_vib_value = df_filtered[f'HOUSING VIB {bearing}'].mean()
-                    pedestal_health_index = max(0, min(10,
-                        coeffs_pedestal['Coefficient A'].values[0] * housing_vib_value**2 + 
-                        coeffs_pedestal['Coefficient B'].values[0] * housing_vib_value + 
-                        coeffs_pedestal['Coefficient C'].values[0]))
+            if not coeffs_pedestal.empty:
+                housing_vib_value = df_filtered[f'HOUSING VIB {bearing}'].mean()
+                pedestal_health_index = max(0, min(10,
+                    coeffs_pedestal['Coefficient A'].values[0] * housing_vib_value**2 + 
+                    coeffs_pedestal['Coefficient B'].values[0] * housing_vib_value + 
+                    coeffs_pedestal['Coefficient C'].values[0]))
 
-            else:
-                # For bearings 5 to 8
-                if not coeffs_vibration_x.empty:
-                    shaft_vib_x_value = df_filtered[f'SHAFT VIB X {bearing}'].mean()
-                    vibration_health_index_x = max(0, min(10,
-                        coeffs_vibration_x['Coefficient A'].values[0] * shaft_vib_x_value**2 + 
-                        coeffs_vibration_x['Coefficient B'].values[0] * shaft_vib_x_value + 
-                        coeffs_vibration_x['Coefficient C'].values[0]))
+            # For non-BBGS Unit 3, use the single pedestal health index
+            weighted_health_index = max(0, min(100,
+                100 / ((3 * metal_health_index + 4 * vibration_health_index_x + 4 * vibration_health_index_y + 
+                        2 * pedestal_health_index + 2 * drain_health_index) / 15)))
 
-                if not coeffs_vibration_y.empty:
-                    shaft_vib_y_value = df_filtered[f'SHAFT VIB Y {bearing}'].mean()
-                    vibration_health_index_y = max(0, min(10,
-                        coeffs_vibration_y['Coefficient A'].values[0] * shaft_vib_y_value**2 + 
-                        coeffs_vibration_y['Coefficient B'].values[0] * shaft_vib_y_value + 
-                        coeffs_vibration_y['Coefficient C'].values[0]))
-
-                if not coeffs_pedestal.empty:
-                    housing_vib_value = df_filtered[f'HOUSING VIB {bearing}'].mean()
-                    pedestal_health_index = max(0, min(10,
-                        coeffs_pedestal['Coefficient A'].values[0] * housing_vib_value**2 + 
-                        coeffs_pedestal['Coefficient B'].values[0] * housing_vib_value + 
-                        coeffs_pedestal['Coefficient C'].values[0]))
-                                    # Aggregate health indices
-
-                        
-            # Overall health index calculation here...
-            weighted_health_index = max(0,min(100,100 / ((3 * metal_health_index + 4 * vibration_health_index_x + 
-                                             4 * vibration_health_index_y + 2 * pedestal_health_index + 2 * drain_health_index) / 15)))
-                        
+        # Append results to the bearing health index list
         bearing_health_index.append({
             'Bearing': bearing,
             'Drain Temp Index': drain_health_index,
             'Metal Temp Index': metal_health_index,
             'Vibration Index X': vibration_health_index_x,
             'Vibration Index Y': vibration_health_index_y,
-            'Pedestal Index': pedestal_health_index,
+            'Pedestal Index X': pedestal_health_index_x if selected_station == "BBGS" and selected_unit == "Unit 3" else pedestal_health_index,
+            'Pedestal Index Y': pedestal_health_index_y if selected_station == "BBGS" and selected_unit == "Unit 3" else None,
             'Overall Health Index': weighted_health_index
         })
 
 # Create DataFrame for health indices
 health_index_df = pd.DataFrame(bearing_health_index)
+
 
         # Display health indices
 #st.write(health_index_df)
