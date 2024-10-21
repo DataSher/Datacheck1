@@ -254,8 +254,8 @@ for bearing in bearings:
 
                         
             # Overall health index calculation here...
-                weighted_health_index = 100 / ((3 * metal_health_index + 4 * vibration_health_index_x + 
-                                             4 * vibration_health_index_y + 2 * pedestal_health_index + 2 * drain_health_index) / 15)
+                weighted_health_index = max(0, min(100, (100 / ((3 * metal_health_index + 4 * vibration_health_index_x + 
+                                             4 * vibration_health_index_y + 2 * pedestal_health_index + 2 * drain_health_index) / 15))))
 
         # Append to the health index list
         bearing_health_index.append({
