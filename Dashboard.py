@@ -290,7 +290,7 @@ if not health_index_df.empty:
         st.write(simplified_health_index_df.style.background_gradient(cmap="Blues_r"))
         # Download option
         csv = simplified_health_index_df.to_csv(index=False).encode('utf-8')
-        #st.download_button("Download Health Index CSV", csv, "health_index.csv", "text/csv")
+        st.download_button("Download Health Index CSV", csv, "health_index.csv", "text/csv")
 else:
     st.warning("No valid bearings to calculate the health index.")
 
