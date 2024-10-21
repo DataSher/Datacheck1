@@ -484,9 +484,7 @@ def plot_efficiency_vs_load():
 #    plot_efficiency_vs_load()
 
 # Add a button to show detailed efficiencies
-# Add a button to show detailed efficiencies
-# Add a button to show detailed efficiencies
-# Add a button to show detailed efficiencies
+
 
 with col8:
 # Streamlit display
