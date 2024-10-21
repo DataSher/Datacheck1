@@ -1,0 +1,5 @@
+MW,Main Steam Pressure,Main Steam Temperature,CRH Pressure,CRH Temperature,HRH Pressure,HRH Temperature,HP6 Pressure,HP6 Temperature,DA Pressure,DA Temperature,LP4 Pressure,LP4 Temperature,LP3 Pressure,LP3 Temperature
+250,148,565,37.5,362,35.4,533,14.9,435,7.15,329,4.5,261,1.38,194
+200,147,543,34.6,364,34.6,535,14.2,431,6.99,331,4.01,262,1.34,196
+175,145,534,34.6,358,34.6,526,14.6,431,6.68,326,3.78,253,1.03,191
+150,144,538,34.5,361,34.5,529,14.7,432,7.05,326,4.05,253,1.35,190
