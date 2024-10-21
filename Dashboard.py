@@ -393,7 +393,7 @@ def compute_section_efficiencies(df):
 efficiency_results = []
 for index, row in df_filtered.iterrows():
     efficiencies = compute_section_efficiencies(row)
-    efficiencies['Timestamp'] = row['Date'].strftime('%m-%d-%Y') + ' ' + row['Time']
+    efficiencies['Timestamp'] = row['Date'].strftime('%d-%m-%Y') + ' ' + row['Time']
     efficiencies['Load'] = row['MW']
     efficiency_results.append(efficiencies)
 
